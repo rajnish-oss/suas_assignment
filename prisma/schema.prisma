@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Conversation {
+  id            String    @id @default(uuid())
+  rawQuery      String
+  draftJson     String
+  isComplete    Boolean   @default(false)
+  missingFields String // JSON string array, e.g. ["exitCondition","holdingPeriod"]
+  pendingField  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  messages   Message[]
+  experiment Experiment?
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  role           String // "user" | "assistant" | "system"
+  content        String
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+model Experiment {
+  id             String       @id @default(uuid())
+  conversationId String       @unique
+  instrument     String
+  timeframe      String
+  entryCondition String
+  exitCondition  String
+  holdingPeriod  String
+  filters        String // JSON string array
+  coreQuestion   String
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
