@@ -37,7 +37,7 @@ const EXTRACTION_RESPONSE_SCHEMA = {
     "filters",
     "coreQuestion",
   ],
-} as const;
+};
 
 const EXTRACTION_SYSTEM_INSTRUCTION = `You are a parser for a trading-strategy research tool. You convert a trader's
 natural-language question into a strict JSON object. You do not evaluate the
